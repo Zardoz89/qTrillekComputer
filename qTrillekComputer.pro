@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui multimedia
+QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,13 +14,10 @@ TARGET = qTrillekComputer
 TEMPLATE = app
 
 
-SOURCES += main.cpp \
-    qtdascreen.cpp
+SOURCES += src/main.cpp
 
-HEADERS  += \
-    qtdascreen.h
-
-FORMS    +=
+include(src/gui/gui.pri)
 
 unix|win32: LIBS += -L/usr/local/lib -lVCOMPUTER
 INCLUDEPATH +=/usr/local/lib
+

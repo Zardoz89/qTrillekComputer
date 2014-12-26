@@ -1,15 +1,15 @@
-#include <QApplication>
+#include "dockscreen.h"
+#include "ui_dockscreen.h"
 
-
-#include "qtdascreen.h"
-
-
-trillek::computer::tda::TDAScreen screen = {0}; // Test screen
-
-int main(int argc, char *argv[])
+DockScreen::DockScreen(QWidget *parent) :
+    QDockWidget(parent),
+    ui(new Ui::DockScreen)
 {
-    QApplication a(argc, argv);
+    ui->setupUi(this);
 
+    tdaScreen = nullptr;
+
+    screen = {0};
     screen.txt_buffer[0]  = 0x0F00 | 'H';
     screen.txt_buffer[1]  = 0x1F00 | 'e';
     screen.txt_buffer[2]  = 0x2F00 | 'l';
@@ -36,16 +36,13 @@ int main(int argc, char *argv[])
         screen.txt_buffer[i] = (bg << 12) | (fg << 8) | ((i-40) % 256);
     }
 
+    tdaScreen = new qTDAScreen(this);
+    tdaScreen->setScreen(screen);
+    //tdaScreen.resize(320, 240);
+    this->setWidget(tdaScreen);
+}
 
-    qTDAScreen qScreen;
-    qScreen.setScreen(screen);
-    qScreen.resize(320, 240);
-
-
-    qScreen.show();
-    //qScreen.updateScreen();
-    qScreen.start();
-
-
-    return a.exec();
+DockScreen::~DockScreen()
+{
+    delete ui;
 }
