@@ -11,6 +11,7 @@ qTDAScreen::qTDAScreen(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(updateScreen()));
 
     this->tdata = new trillek::DWord[320*240];
+    this->setMinimumSize(1, 1);
 }
 
 qTDAScreen::~qTDAScreen()
@@ -46,12 +47,8 @@ void qTDAScreen::updateScreen ()
         }
 
         QImage img((unsigned char*)tdata, 320, 240, QImage::Format_ARGB32 );
-        if (this->size() != QSize(320, 240)) {
-            // Resize
-            this->setPixmap(QPixmap::fromImage(img.scaled(this->size(), Qt::KeepAspectRatio))  );
-        } else {
-            this->setPixmap(QPixmap::fromImage(img) );
-        }
+        QPixmap pixmap = QPixmap::fromImage(img);
+        this->setPixmap(pixmap.scaled(this->size(), Qt::KeepAspectRatio));
     }
 }
 

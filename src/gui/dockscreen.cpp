@@ -1,7 +1,7 @@
 #include "dockscreen.h"
 #include "ui_dockscreen.h"
 
-DockScreen::DockScreen(QWidget *parent) :
+DockScreen::DockScreen(const QString& title, QWidget* parent) :
     QDockWidget(parent),
     ui(new Ui::DockScreen)
 {
@@ -38,8 +38,11 @@ DockScreen::DockScreen(QWidget *parent) :
 
     tdaScreen = new qTDAScreen(this);
     tdaScreen->setScreen(screen);
-    //tdaScreen.resize(320, 240);
+
     this->setWidget(tdaScreen);
+    this->tdaScreen->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    this->setWindowTitle(title);
 }
 
 DockScreen::~DockScreen()

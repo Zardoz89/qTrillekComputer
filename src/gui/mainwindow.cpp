@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    screens = new DockScreen(this);
+    screens = new DockScreen(QString("Screen 0"), this);
     screens->tdaScreen->start();
 
     this->addDockWidget(Qt::RightDockWidgetArea, screens);

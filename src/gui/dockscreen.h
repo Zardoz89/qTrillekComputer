@@ -15,7 +15,7 @@ class DockScreen : public QDockWidget
     Q_OBJECT
 
 public:
-    explicit DockScreen(QWidget *parent = 0);
+    explicit DockScreen(const QString& title, QWidget *parent = 0);
     ~DockScreen();
 
     trillek::computer::tda::TDAScreen screen; // Test screen
