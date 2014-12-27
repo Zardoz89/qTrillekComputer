@@ -13,6 +13,7 @@ CONFIG += c++11
 TARGET = qTrillekComputer
 TEMPLATE = app
 
+QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += src/main.cpp
 

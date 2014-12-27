@@ -4,6 +4,8 @@
 #include <QLabel>
 #include <QTimer>
 
+#include <memory>
+
 #include <tr-vcomputer/devices/tda.hpp>
 
 class qTDAScreen : public QLabel
@@ -14,13 +16,13 @@ public:
     ~qTDAScreen();
 
     /** Asign a new screen */
-    void setScreen (const trillek::computer::tda::TDAScreen& screen);
+    void setScreen (std::shared_ptr<trillek::computer::tda::TDAScreen> screen);
 
     void start ();
     void stop ();
 
     trillek::DWord* tdata = nullptr;    /// Screen texture data
-    const trillek::computer::tda::TDAScreen* screen = nullptr;    /// TDA Screen
+    std::shared_ptr<trillek::computer::tda::TDAScreen> screen;  /// TDA Screen
 
 signals:
 

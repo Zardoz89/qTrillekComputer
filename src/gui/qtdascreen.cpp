@@ -2,9 +2,11 @@
 #include <QDebug>
 
 #include <algorithm>
+#include <assert.h>
 
 qTDAScreen::qTDAScreen(QWidget *parent) :
-    QLabel(parent)
+    QLabel(parent),
+    screen(nullptr)
 {
     timer = new QTimer(this);
     // setup signal and slot
@@ -27,16 +29,17 @@ qTDAScreen::~qTDAScreen()
     */
 }
 
-void qTDAScreen::setScreen (const trillek::computer::tda::TDAScreen& screen)
+void qTDAScreen::setScreen (std::shared_ptr<trillek::computer::tda::TDAScreen> screen)
 {
-    this->screen = &screen;
+    this->screen = screen;
 }
 
 void qTDAScreen::updateScreen ()
 {
+    assert(tdata != nullptr);
     //qDebug() << "painting texture";
-    if (screen != nullptr && tdata != nullptr) {
-        trillek::computer::tda::TDAtoRGBATexture(*screen, tdata);
+    if (screen) {
+        trillek::computer::tda::TDAtoRGBATexture(*screen.get(), tdata);
 
         // We interchanged B and R components
         for (unsigned i=0; i < 320*240 ; i++) {
