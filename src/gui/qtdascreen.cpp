@@ -13,7 +13,8 @@ qTDAScreen::qTDAScreen(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(updateScreen()));
 
     this->tdata = new trillek::DWord[320*240];
-    this->setMinimumSize(1, 1);
+    this->setMinimumSize(320, 240);
+    this->setAlignment(Qt::AlignCenter);
 }
 
 qTDAScreen::~qTDAScreen()
@@ -21,12 +22,6 @@ qTDAScreen::~qTDAScreen()
     if (this->tdata != nullptr) {
         delete[] tdata;
     }
-    /*
-    // Unnecesary. Qt handles his own objects alone
-    if (timer != nullptr) {
-        delete timer;
-    }
-    */
 }
 
 void qTDAScreen::setScreen (std::shared_ptr<trillek::computer::tda::TDAScreen> screen)
@@ -37,7 +32,7 @@ void qTDAScreen::setScreen (std::shared_ptr<trillek::computer::tda::TDAScreen> s
 void qTDAScreen::updateScreen ()
 {
     assert(tdata != nullptr);
-    //qDebug() << "painting texture";
+    //qDebug() << "painting texture , size : " << this->size();
     if (screen) {
         trillek::computer::tda::TDAtoRGBATexture(*screen.get(), tdata);
 

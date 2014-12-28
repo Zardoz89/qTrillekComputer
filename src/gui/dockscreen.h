@@ -2,6 +2,8 @@
 #define DOCKSCREEN_H
 
 #include <QDockWidget>
+#include <QRect>
+#include <QString>
 #include <memory>
 #include <assert.h>
 
@@ -24,6 +26,9 @@ private:
     Ui::DockScreen *ui;
     qTDAScreen* tdaScreen;
 
+    Qt::WindowFlags oldDockFlags;
+    QString oldStyleSheet;
+    QRect oldGeometry;
 signals:
 
 public slots:
@@ -48,6 +53,12 @@ public slots:
       assert(tdaScreen != nullptr);
       tdaScreen->stop();
     }
+
+    /** Enables/Disables full screen mode */
+    void setFullScreen (bool fullscreen);
+
+    /** Toggles between fullscreen and normal mode*/
+    void toggleFullScreen ();
 };
 
 #endif // DOCKSCREEN_H
