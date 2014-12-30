@@ -47,6 +47,9 @@
       <property name="contextMenuPolicy">
        <enum>Qt::NoContextMenu</enum>
       </property>
+      <property name="toolTip">
+       <string>Press F11 to toggle beetwen fullscreen and normal mode</string>
+      </property>
       <property name="text">
        <string/>
       </property>
