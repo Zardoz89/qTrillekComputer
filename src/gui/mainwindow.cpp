@@ -1,3 +1,5 @@
+#include <QFileDialog>
+#include <QDebug>
 #include <memory>
 
 #include "mainwindow.h"
@@ -51,4 +53,10 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::openROMfile()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open ROM file"), QDir::currentPath(), tr("ROM Files (*.bin *.rom *.ffi);;Any file (*)") );
+    qDebug() << fileName;
 }

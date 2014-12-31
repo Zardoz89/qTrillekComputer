@@ -21,6 +21,11 @@ private:
     Ui::MainWindow *ui;
 
     DockScreen* screens;
+
+signals:
+
+public slots:
+    void openROMfile();
 };
 
 #endif // MAINWINDOW_H
