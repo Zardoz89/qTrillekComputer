@@ -17,6 +17,7 @@ QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += src/main.cpp
 
+
 include(src/gui/gui.pri)
 # qt-json
 include(qt-json/qt-json.pri)

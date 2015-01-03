@@ -4,6 +4,7 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "cpudialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -68,5 +69,11 @@ void MainWindow::setupDevices()
 
 void MainWindow::setupCPU()
 {
+    CPUDialog* dialog = new CPUDialog(this);
+    dialog->config().addCpu("TR3200");
+    if (dialog->exec() == QDialog::Accepted) {
+        auto cpu = dialog->config().cpu();
+        qDebug() << "CPU = " << cpu << "\tCLOCK = " << dialog->config().clock();
+    }
 
 }
