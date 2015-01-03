@@ -6,6 +6,8 @@
 #include "ui_mainwindow.h"
 #include "cpudialog.h"
 
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -13,6 +15,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->computer.reset(new trillek::computer::VComputer());
+    this->rom = rom = new trillek::Byte[32*1024];
+    ui->lbl_ram->setText(QString::number(this->computer->RamSize() / 1024) + QString(" KiB") );
 
     auto screen = std::shared_ptr<trillek::computer::tda::TDAScreen>(new trillek::computer::tda::TDAScreen({0}));
     screen->txt_buffer[0]  = 0x0F00 | 'H';
@@ -54,12 +59,16 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete[] rom;
 }
 
 void MainWindow::openROMfile()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open ROM file"), QDir::currentPath(), tr("ROM Files (*.bin *.rom *.ffi);;Any file (*)") );
-    qDebug() << fileName;
+    qDebug() << "Romfile ="<< fileName;
+    int size = trillek::computer::LoadROM(fileName.toStdString(), this->rom);
+    qDebug() << "Read from rom file :" << size << " bytes";
+    this->computer->SetROM(rom, size);
 }
 
 void MainWindow::setupDevices()
@@ -69,11 +78,17 @@ void MainWindow::setupDevices()
 
 void MainWindow::setupCPU()
 {
+    using namespace trillek::computer;
     CPUDialog* dialog = new CPUDialog(this);
     dialog->config().addCpu("TR3200");
     if (dialog->exec() == QDialog::Accepted) {
         auto cpu = dialog->config().cpu();
         qDebug() << "CPU = " << cpu << "\tCLOCK = " << dialog->config().clock();
+
+        if (cpu.compare(QString("TR3200")) && dialog->config().clock() > 0) {
+            std::unique_ptr<ICPU> cpu(new TR3200(dialog->config().clock() * 100) );
+            this->computer->SetCPU(std::move(cpu));
+        }
     }
 
 }

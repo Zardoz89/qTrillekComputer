@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <memory>
+#include <tr-vcomputer/vc.hpp>
 
 #include "dockscreen.h"
 
@@ -21,6 +23,9 @@ private:
     Ui::MainWindow *ui;
 
     DockScreen* screens;
+
+    std::unique_ptr<trillek::computer::VComputer> computer;
+    trillek::Byte* rom;
 
 signals:
 
