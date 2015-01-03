@@ -26,6 +26,8 @@ signals:
 
 public slots:
     void openROMfile();
+    void setupDevices();
+    void setupCPU();
 };
 
 #endif // MAINWINDOW_H

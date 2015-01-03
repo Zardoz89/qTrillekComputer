@@ -60,3 +60,13 @@ void MainWindow::openROMfile()
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open ROM file"), QDir::currentPath(), tr("ROM Files (*.bin *.rom *.ffi);;Any file (*)") );
     qDebug() << fileName;
 }
+
+void MainWindow::setupDevices()
+{
+
+}
+
+void MainWindow::setupCPU()
+{
+
+}
