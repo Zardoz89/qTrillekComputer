@@ -3,6 +3,7 @@
 
 #include <QLabel>
 #include <QTimer>
+#include <QMutex>
 
 #include <memory>
 
@@ -31,6 +32,7 @@ public slots:
     void updateScreen ();
 private:
     QTimer *timer;
+    QMutex mutex;
 };
 
 #endif // QTDASCREEN_H

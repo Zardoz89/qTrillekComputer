@@ -5,13 +5,15 @@ SOURCES += $${PWD}/mainwindow.cpp \
            $${PWD}/dockscreen.cpp \
            $${PWD}/qtdascreen.cpp \
            $${PWD}/frmsetupcpu.cpp \
-    src/gui/cpudialog.cpp
+    src/gui/cpudialog.cpp \
+    src/gui/computerrun.cpp
 
 HEADERS += $${PWD}/mainwindow.h \
            $${PWD}/dockscreen.h \
            $${PWD}/qtdascreen.h \
            $${PWD}/frmsetupcpu.h \
-    src/gui/cpudialog.h
+    src/gui/cpudialog.h \
+    src/gui/computerrun.h
 
 FORMS   += $${PWD}/mainwindow.ui \
            $${PWD}/dockscreen.ui \

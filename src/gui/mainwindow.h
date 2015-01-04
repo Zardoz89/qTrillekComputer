@@ -6,6 +6,7 @@
 #include <tr-vcomputer/vc.hpp>
 
 #include "dockscreen.h"
+#include "computerrun.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,8 +25,8 @@ private:
 
     DockScreen* screens;
 
-    std::unique_ptr<trillek::computer::VComputer> computer;
-    trillek::Byte* rom;
+    CPUConfig cpu_config;
+    ComputerRun* computer;
 
 signals:
 
@@ -33,6 +34,10 @@ public slots:
     void openROMfile();
     void setupDevices();
     void setupCPU();
+
+    void start();
+    void pause(bool pause);
+    void stop();
 };
 
 #endif // MAINWINDOW_H

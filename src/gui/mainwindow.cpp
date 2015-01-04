@@ -15,10 +15,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->computer.reset(new trillek::computer::VComputer());
-    this->rom = rom = new trillek::Byte[32*1024];
-    ui->lbl_ram->setText(QString::number(this->computer->RamSize() / 1024) + QString(" KiB") );
+    cpu_config.cpu = QString("TR3200");
+    cpu_config.clock = 100;
+    ui->lbl_cpu->setText(cpu_config.cpu + " @ " + QString::number(cpu_config.clock) + "KHz");
 
+    computer = new ComputerRun(cpu_config, this);
+    ui->statusbar->showMessage("Computer OFF");
+    ui->lbl_ram->setText(QString::number(128) + QString(" KiB") );
+/*
     auto screen = std::shared_ptr<trillek::computer::tda::TDAScreen>(new trillek::computer::tda::TDAScreen({0}));
     screen->txt_buffer[0]  = 0x0F00 | 'H';
     screen->txt_buffer[1]  = 0x1F00 | 'e';
@@ -45,10 +49,10 @@ MainWindow::MainWindow(QWidget *parent) :
         trillek::Byte bg = (15 - i) % 16;
         screen->txt_buffer[i] = (bg << 12) | (fg << 8) | ((i-40) % 256);
     }
-
+*/
     screens = new DockScreen(QString("Screen 0"), this);
-    screens->setScreen(screen);
-    screens->start();
+    //screens->setScreen(screen);
+    //screens->start();
 
     this->addDockWidget(Qt::RightDockWidgetArea, screens);
     //this->tabifiedDockWidgets();
@@ -59,16 +63,15 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete[] rom;
+
 }
 
 void MainWindow::openROMfile()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open ROM file"), QDir::currentPath(), tr("ROM Files (*.bin *.rom *.ffi);;Any file (*)") );
-    qDebug() << "Romfile ="<< fileName;
-    int size = trillek::computer::LoadROM(fileName.toStdString(), this->rom);
-    qDebug() << "Read from rom file :" << size << " bytes";
-    this->computer->SetROM(rom, size);
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open ROM file"), QDir::currentPath(), tr("ROM Files (*.bin *.rom *.ffi);;Any file (*)") );
+    qDebug() << "Romfile ="<< filename;
+    computer->loadROM(filename);
+
 }
 
 void MainWindow::setupDevices()
@@ -85,10 +88,51 @@ void MainWindow::setupCPU()
         auto cpu = dialog->config().cpu();
         qDebug() << "CPU = " << cpu << "\tCLOCK = " << dialog->config().clock();
 
-        if (cpu.compare(QString("TR3200")) && dialog->config().clock() > 0) {
-            std::unique_ptr<ICPU> cpu(new TR3200(dialog->config().clock() * 100) );
-            this->computer->SetCPU(std::move(cpu));
-        }
+        this->cpu_config.cpu = cpu;
+        this->cpu_config.clock = dialog->config().clock();
+        ui->lbl_cpu->setText(cpu_config.cpu + " @ " + QString::number(cpu_config.clock) + "KHz");
+
+        computer->setCPUConfig(cpu_config);
     }
 
+}
+
+void MainWindow::start()
+{
+    if (! this->computer->isOn()) {
+        this->computer->on();
+        if (this->computer->isOn()) {
+            ui->statusbar->showMessage("Computer ON");
+            ui->action_Start->setEnabled(false);
+            ui->actionPause->setEnabled(true);
+            ui->action_Stop->setEnabled(true);
+        } else {
+            ui->statusbar->showMessage("Computer OFF");
+        }
+    }
+}
+
+void MainWindow::pause(bool pause)
+{
+    this->computer->pause(pause);
+    if (pause) {
+        ui->statusbar->showMessage("Computer ON (Paused)");
+        ui->action_Start->setEnabled(false);
+        ui->actionPause->setEnabled(true);
+        ui->action_Stop->setEnabled(true);
+    } else {
+        ui->statusbar->showMessage("Computer ON");
+        ui->action_Start->setEnabled(false);
+        ui->actionPause->setEnabled(true);
+        ui->action_Stop->setEnabled(true);
+    }
+}
+
+void MainWindow::stop()
+{
+    this->computer->off();
+    ui->statusbar->showMessage("Computer OFF");
+    ui->action_Start->setEnabled(true);
+    ui->actionPause->setEnabled(false);
+    ui->action_Stop->setEnabled(false);
 }

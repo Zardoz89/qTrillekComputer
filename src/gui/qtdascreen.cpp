@@ -26,16 +26,18 @@ qTDAScreen::~qTDAScreen()
 
 void qTDAScreen::setScreen (std::shared_ptr<trillek::computer::tda::TDAScreen> screen)
 {
+    mutex.lock();
     this->screen = screen;
+    mutex.unlock();
 }
 
 void qTDAScreen::updateScreen ()
 {
     assert(tdata != nullptr);
-    //qDebug() << "painting texture , size : " << this->size();
     if (screen) {
+        mutex.lock();
         trillek::computer::tda::TDAtoRGBATexture(*screen.get(), tdata);
-
+        mutex.unlock();
         // We interchanged B and R components
         for (unsigned i=0; i < 320*240 ; i++) {
             trillek::DWord g_a   = tdata[i] & 0xFF00FF00;
@@ -48,6 +50,7 @@ void qTDAScreen::updateScreen ()
         QPixmap pixmap = QPixmap::fromImage(img);
         this->setPixmap(pixmap.scaled(this->size(), Qt::KeepAspectRatio));
     }
+
 }
 
 void qTDAScreen::start ()

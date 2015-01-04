@@ -138,7 +138,16 @@
      <string>&amp;About</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menu_Run">
+    <property name="title">
+     <string>&amp;Run</string>
+    </property>
+    <addaction name="action_Start"/>
+    <addaction name="action_Stop"/>
+    <addaction name="actionPause"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menu_Run"/>
    <addaction name="menuOptions"/>
    <addaction name="menu_About"/>
   </widget>
@@ -161,6 +170,39 @@
   <action name="actionSetup_CPU">
    <property name="text">
     <string>Setup CPU</string>
+   </property>
+  </action>
+  <action name="action_Start">
+   <property name="icon">
+    <iconset theme="media-playback-start"/>
+   </property>
+   <property name="text">
+    <string>&amp;Start</string>
+   </property>
+  </action>
+  <action name="action_Stop">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="media-playback-stop"/>
+   </property>
+   <property name="text">
+    <string>&amp;Stop</string>
+   </property>
+  </action>
+  <action name="actionPause">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="media-playback-pause"/>
+   </property>
+   <property name="text">
+    <string>&amp;Pause</string>
    </property>
   </action>
  </widget>
@@ -230,10 +272,61 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_Start</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>start()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_Stop</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>stop()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionPause</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>pause(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openROMfile()</slot>
   <slot>setupCPU()</slot>
   <slot>setupDevices()</slot>
+  <slot>start()</slot>
+  <slot>stop()</slot>
+  <slot>pause(bool)</slot>
  </slots>
 </ui>
