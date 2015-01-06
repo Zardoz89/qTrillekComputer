@@ -3,6 +3,8 @@
 
 #include <QThread>
 #include <QMutex>
+#include <QMap>
+#include <memory>
 #include <tr-vcomputer/vc.hpp>
 
 struct CPUConfig {
@@ -21,6 +23,7 @@ public:
     void run();
 
     std::unique_ptr<trillek::computer::VComputer> computer;
+    QMap<unsigned, std::shared_ptr<trillek::computer::Device>> devices; // To store devices
 
     bool isPaused()
     {
@@ -47,6 +50,8 @@ public slots:
     void loadROM(const QString& filename);
 
 private:
+    void addDevicesToComputer();
+
     bool paused;
     QMutex m_cmp;
 

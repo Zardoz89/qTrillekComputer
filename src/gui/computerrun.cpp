@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <memory>
 #include <QDebug>
 
 #include "computerrun.h"
@@ -10,10 +9,13 @@ ComputerRun::ComputerRun(const CPUConfig& cpu_cfg, QObject *parent) :
 {
     this->rom = new trillek::Byte[32*1024];
 
+    this->devices.insert(3, std::make_shared<trillek::computer::tda::TDADev>());
+
     this->computer.reset(new trillek::computer::VComputer());
     this->setCPUConfig(cpu_cfg);
+    addDevicesToComputer();
 
-    this->connect(this, SIGNAL(finished()), this, SLOT(deleteLater()));
+    //this->connect(this, SIGNAL(finished()), this, SLOT(deleteLater()));
 }
 
 ComputerRun::~ComputerRun()
@@ -84,6 +86,8 @@ void ComputerRun::resizeRam(std::size_t ram_size)
     std::unique_ptr<trillek::computer::ICPU> cpu = std::move(this->computer->RmCPU());
     this->computer.reset(new trillek::computer::VComputer(ram_size));
     this->computer->SetCPU(std::move(cpu));
+
+    addDevicesToComputer();
     m_cmp.unlock();
 }
 
@@ -104,4 +108,13 @@ void ComputerRun::loadROM(const QString& filename)
     int size = trillek::computer::LoadROM(filename.toStdString(), this->rom);
     qDebug() << "Read from rom file :" << size << " bytes";
     this->computer->SetROM(rom, size);
+}
+
+void ComputerRun::addDevicesToComputer()
+{
+    QMapIterator<unsigned, std::shared_ptr<trillek::computer::Device>> it(this->devices);
+    while (it.hasNext()) {
+        it.next();
+        this->computer->AddDevice(it.key(), it.value());
+    }
 }
