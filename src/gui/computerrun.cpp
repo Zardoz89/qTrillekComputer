@@ -27,12 +27,14 @@ void ComputerRun::run()
 {
     //QThread::run();
     unsigned vsync_counter = 0;
-    while (true) {
+    bool loop = true;
+    while (loop) {
 
         m_cmp.lock();
         if (! this->computer->isOn()) {
             m_cmp.unlock();
-            this->exit();
+            loop = false;
+            continue;
         }
         m_cmp.unlock();
 

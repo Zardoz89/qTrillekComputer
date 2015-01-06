@@ -10,11 +10,20 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    vscreen(nullptr)
+    ui(new Ui::MainWindow)
 {
+    // UI Setup
     ui->setupUi(this);
+    lbl_cpuOnOff = new QLabel(this);
+    lbl_cpuOnOff->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    startIcon = QIcon::fromTheme("media-playback-start").pixmap(16);
+    stopIcon = QIcon::fromTheme("media-playback-stop").pixmap(16);
+    pauseIcon = QIcon::fromTheme("media-playback-pause").pixmap(16);
+    lbl_cpuOnOff->setPixmap(stopIcon);
+    ui->statusbar->addPermanentWidget(lbl_cpuOnOff);
 
+
+    // Initial setup
     cpu_config.cpu = QString("TR3200");
     cpu_config.clock = 100;
     ui->lbl_cpu->setText(cpu_config.cpu + " @ " + QString::number(cpu_config.clock) + "KHz");
@@ -23,11 +32,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->statusbar->showMessage("Computer OFF");
     ui->lbl_ram->setText(QString::number(128) + QString(" KiB") );
 
-    vscreen = new DockScreen(QString("Screen 0"), this);
-    computer->screens.insert(3, vscreen);
-    vscreen->start();
+    // Hardwired virtual screen .. TODO A way to create/delete devices and associated virtual screen for TDA
+    vscreens.append( new DockScreen(QString("Screen 0"), this));
+    computer->screens.insert(3, vscreens.first() );
 
-    this->addDockWidget(Qt::RightDockWidgetArea, vscreen);
+    this->addDockWidget(Qt::RightDockWidgetArea, vscreens.first());
     //this->tabifiedDockWidgets();
 
 
@@ -79,8 +88,15 @@ void MainWindow::start()
             ui->action_Start->setEnabled(false);
             ui->actionPause->setEnabled(true);
             ui->action_Stop->setEnabled(true);
+
+            QListIterator<DockScreen*> it(this->vscreens);
+            while (it.hasNext()) {
+                it.next()->start();
+            }
+            lbl_cpuOnOff->setPixmap(startIcon);
         } else {
             ui->statusbar->showMessage("Computer OFF");
+            lbl_cpuOnOff->setPixmap(stopIcon);
         }
     }
 }
@@ -93,11 +109,23 @@ void MainWindow::pause(bool pause)
         ui->action_Start->setEnabled(false);
         ui->actionPause->setEnabled(true);
         ui->action_Stop->setEnabled(true);
+
+        QListIterator<DockScreen*> it(this->vscreens);
+        while (it.hasNext()) {
+            it.next()->stop();
+        }
+        lbl_cpuOnOff->setPixmap(pauseIcon);
     } else {
         ui->statusbar->showMessage("Computer ON");
         ui->action_Start->setEnabled(false);
         ui->actionPause->setEnabled(true);
         ui->action_Stop->setEnabled(true);
+
+        QListIterator<DockScreen*> it(this->vscreens);
+        while (it.hasNext()) {
+            it.next()->start();
+        }
+        lbl_cpuOnOff->setPixmap(startIcon);
     }
 }
 
@@ -108,4 +136,10 @@ void MainWindow::stop()
     ui->action_Start->setEnabled(true);
     ui->actionPause->setEnabled(false);
     ui->action_Stop->setEnabled(false);
+
+    QListIterator<DockScreen*> it(this->vscreens);
+    while (it.hasNext()) {
+        it.next()->stop();
+    }
+    lbl_cpuOnOff->setPixmap(stopIcon);
 }

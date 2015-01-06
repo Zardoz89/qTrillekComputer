@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
+#include <QList>
 #include <memory>
 #include <tr-vcomputer/vc.hpp>
 
@@ -22,8 +24,12 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QLabel* lbl_cpuOnOff;
+    QPixmap startIcon;
+    QPixmap stopIcon;
+    QPixmap pauseIcon;
 
-    DockScreen* vscreen;
+    QList<DockScreen*> vscreens;
 
     CPUConfig cpu_config;
     ComputerRun* computer;
