@@ -33,16 +33,18 @@ public:
     QMap<unsigned, std::shared_ptr<trillek::computer::Device>> devices; // To store devices
     QMap<unsigned, DockScreen* > screens; // Links a device with a screen
 
-    bool isPaused()
+    bool isPaused() const
     {
         return this->paused;
     }
 
-    bool isOn()
+    bool isOn() const
     {
         return computer->isOn();
     }
 
+
+    double getEstimatedSpeed() const; /// Returs the estiamted emulation speed
 signals:
 
 
@@ -64,6 +66,7 @@ private:
     QMutex m_cmp;
 
     trillek::Byte* rom;
+    double calc_speed;
 };
 
 #endif // COMPUTERRUN_H

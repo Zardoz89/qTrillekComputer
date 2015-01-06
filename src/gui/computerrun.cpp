@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <QDebug>
+#include <QElapsedTimer>
 
 #include "computerrun.h"
 
@@ -26,10 +27,13 @@ ComputerRun::~ComputerRun()
 void ComputerRun::run()
 {
     //QThread::run();
+    unsigned aux_counter = 0;
     unsigned vsync_counter = 0;
     bool loop = true;
-    while (loop) {
+    QElapsedTimer timer;
+    timer.start();
 
+    while (loop) {
         m_cmp.lock();
         if (! this->computer->isOn()) {
             m_cmp.unlock();
@@ -41,11 +45,7 @@ void ComputerRun::run()
         if (paused) {
             yieldCurrentThread();
             continue;
-        }
-
-        m_cmp.lock();
-        vsync_counter += this->computer->Update(1.0); // TODO Get delta time
-        m_cmp.unlock();
+        }      
 
         if (vsync_counter > 4000) { // 100.000 / 25 = 4000
             vsync_counter -= 4000;
@@ -62,7 +62,28 @@ void ComputerRun::run()
             }
         }
 
-        this->msleep(100); // TODO Measure time, and calc how many ms need to sleep
+        auto deltans = timer.nsecsElapsed();
+        timer.start();
+        double delta = (double)deltans / 1000000000.0; // Delta time on seconds
+
+        m_cmp.lock();
+        auto ticks = this->computer->Update(delta);
+        m_cmp.unlock();
+        vsync_counter += ticks; aux_counter += ticks;
+        // TODO Calc how many ms need to sleep. Should take 100 ms bettwen every iteration
+        unsigned long sleeptime = 100 ;
+        sleeptime = sleeptime < 50 ? 50 : sleeptime;
+        sleeptime = sleeptime > 500 ? 500 : sleeptime;
+        if (aux_counter > 200000) {
+            aux_counter -= 200000;
+            qDebug() << delta << " s Ticks " << ticks << " Sleeptime" << sleeptime << " ms";
+            const double ttick = (delta / ticks); // Time of a base clock tick
+            const double tclk = 1.0 / 1000000.0; // Teorical Base clock tick time (1Mhz)
+            calc_speed = (tclk / ttick);
+            qDebug() << "Speed of " << 100.0f * calc_speed << " %";
+        }
+
+        this->msleep(sleeptime);
     }
 }
 
@@ -134,4 +155,9 @@ void ComputerRun::addDevicesToComputer()
         it.next();
         this->computer->AddDevice(it.key(), it.value());
     }
+}
+
+double ComputerRun::getEstimatedSpeed() const
+{
+    return calc_speed;
 }
