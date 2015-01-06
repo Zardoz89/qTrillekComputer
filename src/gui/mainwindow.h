@@ -23,7 +23,7 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    DockScreen* screens;
+    DockScreen* vscreen;
 
     CPUConfig cpu_config;
     ComputerRun* computer;

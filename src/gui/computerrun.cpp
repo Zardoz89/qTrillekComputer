@@ -25,8 +25,10 @@ ComputerRun::~ComputerRun()
 
 void ComputerRun::run()
 {
-    QThread::run();
-    while (1) {
+    //QThread::run();
+    unsigned vsync_counter = 0;
+    while (true) {
+
         m_cmp.lock();
         if (! this->computer->isOn()) {
             m_cmp.unlock();
@@ -40,19 +42,32 @@ void ComputerRun::run()
         }
 
         m_cmp.lock();
-        this->computer->Update(1.0);
+        vsync_counter += this->computer->Update(1.0); // TODO Get delta time
         m_cmp.unlock();
 
-        this->msleep(100);
+        if (vsync_counter > 4000) { // 100.000 / 25 = 4000
+            vsync_counter -= 4000;
+            // VSync screen devices
+            QMapIterator<unsigned, DockScreen*> it(this->screens);
+            while (it.hasNext()) {
+                it.next();
+                std::shared_ptr<trillek::computer::tda::TDADev> dev =
+                        std::dynamic_pointer_cast<trillek::computer::tda::TDADev>( this->devices[it.key()]);
+                dev->DoVSync();
+                auto screen = it.value()->getScreen();
+                auto ptr_scr = screen.get();
+                dev->DumpScreen( *ptr_scr);
+            }
+        }
+
+        this->msleep(100); // TODO Measure time, and calc how many ms need to sleep
     }
 }
 
 void ComputerRun::on()
 {
     m_cmp.lock();
-    qDebug() << this->computer->haveCpu();
     this->computer->On();
-    qDebug() << this->computer->isOn();
     if (this->computer->isOn()) {
         paused = false;
         this->start();

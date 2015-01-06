@@ -11,7 +11,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    screens(nullptr)
+    vscreen(nullptr)
 {
     ui->setupUi(this);
 
@@ -23,10 +23,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->statusbar->showMessage("Computer OFF");
     ui->lbl_ram->setText(QString::number(128) + QString(" KiB") );
 
-    screens = new DockScreen(QString("Screen 0"), this);
-    //screens->start();
+    vscreen = new DockScreen(QString("Screen 0"), this);
+    computer->screens.insert(3, vscreen);
+    vscreen->start();
 
-    this->addDockWidget(Qt::RightDockWidgetArea, screens);
+    this->addDockWidget(Qt::RightDockWidgetArea, vscreen);
     //this->tabifiedDockWidgets();
 
 

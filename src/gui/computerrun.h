@@ -7,6 +7,8 @@
 #include <memory>
 #include <tr-vcomputer/vc.hpp>
 
+#include "dockscreen.h"
+
 struct CPUConfig {
     QString cpu;
     unsigned int clock;
@@ -29,6 +31,7 @@ public:
 
     std::unique_ptr<trillek::computer::VComputer> computer;
     QMap<unsigned, std::shared_ptr<trillek::computer::Device>> devices; // To store devices
+    QMap<unsigned, DockScreen* > screens; // Links a device with a screen
 
     bool isPaused()
     {
