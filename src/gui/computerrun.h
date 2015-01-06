@@ -12,6 +12,11 @@ struct CPUConfig {
     unsigned int clock;
 };
 
+// TODO Cada X ciclos base de la maquina virtual, hacer el VSync() y actualizar el TDAScreen
+// TDAScreen es un shared_ptr, pero hay que crearlo en algun sitio, y enlazar la pantalla-TDAScreen-dispositivo
+// Quizas hacer que TDAScreen sea creado por qTDAScreen y que lo devuelva en un metodo, con lo que solo habria que
+// mapear el par pantalla-dispositivo
+
 class ComputerRun : public QThread
 {
     Q_OBJECT

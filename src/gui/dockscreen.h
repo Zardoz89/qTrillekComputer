@@ -7,7 +7,7 @@
 #include <memory>
 #include <assert.h>
 
-#include "qtdascreen.h"
+#include "tdawidget.h"
 
 namespace Ui {
 class DockScreen;
@@ -24,7 +24,7 @@ public:
 
 private:
     Ui::DockScreen *ui;
-    qTDAScreen* tdaScreen;
+    TDAWidget* tdaScreen;
 
     Qt::WindowFlags oldDockFlags;
     QString oldStyleSheet;
@@ -33,11 +33,10 @@ signals:
 
 public slots:
 
-    /** Sets the TDA Screen to show */
-    void setScreen (std::shared_ptr<trillek::computer::tda::TDAScreen> screen)
+    /** Get a shared_ptr to screen state to render */
+    std::shared_ptr<trillek::computer::tda::TDAScreen> getScreen ()
     {
-      assert(tdaScreen != nullptr);
-      tdaScreen->setScreen(screen);
+      return tdaScreen->getScreen();
     }
 
     /** Auto updates the texture at 25 Hz */

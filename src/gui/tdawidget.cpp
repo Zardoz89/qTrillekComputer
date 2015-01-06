@@ -1,10 +1,10 @@
-#include "qtdascreen.h"
+#include "tdawidget.h"
 #include <QDebug>
 
 #include <algorithm>
 #include <assert.h>
 
-qTDAScreen::qTDAScreen(QWidget *parent) :
+TDAWidget::TDAWidget(QWidget *parent) :
     QLabel(parent),
     screen(nullptr)
 {
@@ -15,23 +15,33 @@ qTDAScreen::qTDAScreen(QWidget *parent) :
     this->tdata = new trillek::DWord[320*240];
     this->setMinimumSize(320, 240);
     this->setAlignment(Qt::AlignCenter);
+
+    this->screen = std::shared_ptr<trillek::computer::tda::TDAScreen>(new trillek::computer::tda::TDAScreen());
 }
 
-qTDAScreen::~qTDAScreen()
+TDAWidget::~TDAWidget()
 {
     if (this->tdata != nullptr) {
         delete[] tdata;
     }
 }
 
-void qTDAScreen::setScreen (std::shared_ptr<trillek::computer::tda::TDAScreen> screen)
+std::shared_ptr<trillek::computer::tda::TDAScreen> TDAWidget::getScreen ()
+{
+    return this->screen;
+}
+
+void TDAWidget::lockScreen()
 {
     mutex.lock();
-    this->screen = screen;
+}
+
+void TDAWidget::unlockScreen()
+{
     mutex.unlock();
 }
 
-void qTDAScreen::updateScreen ()
+void TDAWidget::updateScreen ()
 {
     assert(tdata != nullptr);
     if (screen) {
@@ -53,12 +63,12 @@ void qTDAScreen::updateScreen ()
 
 }
 
-void qTDAScreen::start ()
+void TDAWidget::start ()
 {
     timer->start(40); // 25 Hz
 }
 
-void qTDAScreen::stop ()
+void TDAWidget::stop ()
 {
     timer->stop();
 }
