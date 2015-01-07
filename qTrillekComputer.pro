@@ -17,7 +17,6 @@ QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += src/main.cpp
 
-
 include(src/gui/gui.pri)
 # qt-json
 include(qt-json/qt-json.pri)
@@ -25,4 +24,7 @@ include(qt-json/qt-json.pri)
 unix|win32: LIBS += -L/usr/local/lib -lVCOMPUTER
 INCLUDEPATH +=/usr/local/lib
 INCLUDEPATH +=src/gui
+
+HEADERS += \
+    src/gui/keypresshook.h
 
