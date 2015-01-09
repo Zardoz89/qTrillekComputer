@@ -209,6 +209,7 @@ bool ComputerRun::processKeyEvent(QKeyEvent *keyEvent)
     case Qt::Key_Minus:
         scancode = SCANCODES::SCAN_MINUS;
         break;
+    case Qt::Key_Colon:
     case Qt::Key_Period:
         scancode = SCANCODES::SCAN_PERIOD;
         break;
