@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QMap>
+#include <QKeyEvent>
 #include <memory>
 #include <tr-vcomputer/vc.hpp>
 
@@ -32,6 +33,7 @@ public:
     std::unique_ptr<trillek::computer::VComputer> computer;
     QMap<unsigned, std::shared_ptr<trillek::computer::Device>> devices; // To store devices
     QMap<unsigned, DockScreen* > screens; // Links a device with a screen
+    unsigned active_keyboard; // Device slot with the active virtual keyboard
 
     bool isPaused() const
     {
@@ -43,6 +45,7 @@ public:
         return computer->isOn();
     }
 
+    bool processKeyEvent(QKeyEvent *keyEvent); /// Process a key event. Return true if is a valid vcomputer keyboard key
 
     double getEstimatedSpeed() const; /// Returs the estiamted emulation speed
 signals:
@@ -58,6 +61,8 @@ public slots:
     void setCPUConfig(const CPUConfig& cfg);
 
     void loadROM(const QString& filename);
+
+
 
 private:
     void addDevicesToComputer();

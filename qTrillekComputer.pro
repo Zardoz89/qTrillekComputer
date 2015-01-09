@@ -25,6 +25,4 @@ unix|win32: LIBS += -L/usr/local/lib -lVCOMPUTER
 INCLUDEPATH +=/usr/local/lib
 INCLUDEPATH +=src/gui
 
-HEADERS += \
-    src/gui/keypresshook.h
 

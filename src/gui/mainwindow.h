@@ -9,6 +9,7 @@
 
 #include "dockscreen.h"
 #include "computerrun.h"
+#include "keypresshook.h"
 
 namespace Ui {
 class MainWindow;
@@ -30,6 +31,7 @@ private:
     QPixmap pauseIcon;
 
     QList<DockScreen*> vscreens;
+    KeyPressHook* keyPressHook;
 
     CPUConfig cpu_config;
     ComputerRun* computer;
@@ -44,6 +46,7 @@ public slots:
     void start();
     void pause(bool pause);
     void stop();
+
 };
 
 #endif // MAINWINDOW_H

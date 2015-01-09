@@ -32,9 +32,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->statusbar->showMessage("Computer OFF");
     ui->lbl_ram->setText(QString::number(128) + QString(" KiB") );
 
+    // Keyboard capture
+    this->keyPressHook = new KeyPressHook(computer, this);
+    this->installEventFilter(this->keyPressHook);
+
     // Hardwired virtual screen .. TODO A way to create/delete devices and associated virtual screen for TDA
     vscreens.append( new DockScreen(QString("Screen 0"), this));
-    computer->screens.insert(3, vscreens.first() );
+    computer->screens.insert(5, vscreens.first() );
 
     this->addDockWidget(Qt::RightDockWidgetArea, vscreens.first());
     //this->tabifiedDockWidgets();
@@ -85,6 +89,9 @@ void MainWindow::start()
         this->computer->on();
         if (this->computer->isOn()) {
             ui->statusbar->showMessage("Computer ON");
+            this->keyPressHook->setGrab(true); // enable vkeyboard
+            this->grabKeyboard();
+
             ui->action_Start->setEnabled(false);
             ui->actionPause->setEnabled(true);
             ui->action_Stop->setEnabled(true);
@@ -96,6 +103,8 @@ void MainWindow::start()
             lbl_cpuOnOff->setPixmap(startIcon);
         } else {
             ui->statusbar->showMessage("Computer OFF");
+            this->keyPressHook->setGrab(false); // disables vkeyboard
+            this->releaseKeyboard();
             lbl_cpuOnOff->setPixmap(stopIcon);
         }
     }
@@ -106,6 +115,9 @@ void MainWindow::pause(bool pause)
     this->computer->pause(pause);
     if (pause) {
         ui->statusbar->showMessage("Computer ON (Paused)");
+        this->keyPressHook->setGrab(false);
+        this->releaseKeyboard();
+
         ui->action_Start->setEnabled(false);
         ui->actionPause->setEnabled(true);
         ui->action_Stop->setEnabled(true);
@@ -117,6 +129,9 @@ void MainWindow::pause(bool pause)
         lbl_cpuOnOff->setPixmap(pauseIcon);
     } else {
         ui->statusbar->showMessage("Computer ON");
+        this->keyPressHook->setGrab(true);
+        this->grabKeyboard();
+
         ui->action_Start->setEnabled(false);
         ui->actionPause->setEnabled(true);
         ui->action_Stop->setEnabled(true);
@@ -133,6 +148,9 @@ void MainWindow::stop()
 {
     this->computer->off();
     ui->statusbar->showMessage("Computer OFF");
+    this->keyPressHook->setGrab(false);
+    this->releaseKeyboard();
+
     ui->action_Start->setEnabled(true);
     ui->actionPause->setEnabled(false);
     ui->action_Stop->setEnabled(false);
