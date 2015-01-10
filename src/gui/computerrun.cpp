@@ -56,8 +56,8 @@ void ComputerRun::run()
             continue;
         }      
 
-        if (vsync_counter > 4000) { // 100.000 / 25 = 4000
-            vsync_counter -= 4000;
+        if (vsync_counter > 40000) { // 1000.000 / 25 = 40000
+            vsync_counter -= 40000;
             // VSync screen devices
             QMapIterator<unsigned, DockScreen*> it(this->screens);
             while (it.hasNext()) {
@@ -79,13 +79,13 @@ void ComputerRun::run()
         auto ticks = this->computer->Update(delta);
         m_cmp.unlock();
         vsync_counter += ticks; aux_counter += ticks;
-        // TODO Calc how many ms need to sleep. Should take 100 ms bettwen every iteration
-        unsigned long sleeptime = 100 ;
-        sleeptime = sleeptime < 50 ? 50 : sleeptime;
-        sleeptime = sleeptime > 500 ? 500 : sleeptime;
-        if (aux_counter > 800000) {
+        // TODO Calc how many ms need to sleep. Should take 50 ms bettwen every iteration
+        unsigned long sleeptime = 50000 ; // ticks
+        sleeptime = sleeptime < 10000 ? 10000 : sleeptime;
+        sleeptime = sleeptime > 100000 ? 100000 : sleeptime;
+        if (aux_counter > 800000) { // At ~1,25 Hz
             aux_counter -= 800000;
-            qDebug() << delta << " s Ticks " << ticks << " Sleeptime" << sleeptime << " ms";
+            //qDebug() << delta << " s Ticks " << ticks << " Sleeptime" << sleeptime << " us";
             const double ttick = (delta / ticks); // Time of a base clock tick
             const double tclk = 1.0 / 1000000.0; // Teorical Base clock tick time (1Mhz)
             calc_speed = (tclk / ttick);
@@ -93,7 +93,7 @@ void ComputerRun::run()
             emit updateSpeed(calc_speed);
         }
 
-        this->msleep(sleeptime);
+        this->usleep(sleeptime);
     }
 }
 
