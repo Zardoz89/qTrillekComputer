@@ -89,7 +89,8 @@ void ComputerRun::run()
             const double ttick = (delta / ticks); // Time of a base clock tick
             const double tclk = 1.0 / 1000000.0; // Teorical Base clock tick time (1Mhz)
             calc_speed = (tclk / ttick);
-            qDebug() << "Speed of " << 100.0f * calc_speed << " %";
+            //qDebug() << "Speed of " << 100.0f * calc_speed << " %";
+            emit updateSpeed(calc_speed);
         }
 
         this->msleep(sleeptime);
@@ -112,6 +113,7 @@ void ComputerRun::off()
     m_cmp.lock();
     this->computer->Off();
     m_cmp.unlock();
+    emit updateSpeed(-1);
 }
 
 void ComputerRun::pause(bool pause)

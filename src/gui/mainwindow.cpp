@@ -14,12 +14,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     // UI Setup
     ui->setupUi(this);
+
+    lbl_cpupercent = new QLabel(this);
     lbl_cpuOnOff = new QLabel(this);
     lbl_cpuOnOff->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     startIcon = QIcon::fromTheme("media-playback-start").pixmap(16);
     stopIcon = QIcon::fromTheme("media-playback-stop").pixmap(16);
     pauseIcon = QIcon::fromTheme("media-playback-pause").pixmap(16);
     lbl_cpuOnOff->setPixmap(stopIcon);
+    ui->statusbar->addPermanentWidget(lbl_cpupercent);
     ui->statusbar->addPermanentWidget(lbl_cpuOnOff);
 
 
@@ -31,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     computer = new ComputerRun(cpu_config, this);
     ui->statusbar->showMessage("Computer OFF");
     ui->lbl_ram->setText(QString::number(128) + QString(" KiB") );
+    this->connect(computer, SIGNAL(updateSpeed(double)), this, SLOT(updateEmuSpeed(double)) );
 
     // Keyboard capture
     this->keyPressHook = new KeyPressHook(computer, this);
@@ -160,4 +164,13 @@ void MainWindow::stop()
         it.next()->stop();
     }
     lbl_cpuOnOff->setPixmap(stopIcon);
+}
+
+void MainWindow::updateEmuSpeed(double speed)
+{
+    if (speed < 0) {
+        this->lbl_cpupercent->setText("");
+    } else {
+        this->lbl_cpupercent->setText(tr("Speed : %1 %").arg(speed * 100.0f , 1, 'f', 1) );
+    }
 }

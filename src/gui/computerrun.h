@@ -47,9 +47,9 @@ public:
 
     bool processKeyEvent(QKeyEvent *keyEvent); /// Process a key event. Return true if is a valid vcomputer keyboard key
 
-    double getEstimatedSpeed() const; /// Returs the estiamted emulation speed
+    double getEstimatedSpeed() const; /// Returs the estimated emulation speed
 signals:
-
+    void updateSpeed(double); /// Informs of the estimated emulation speed. -1 if is stoped
 
 public slots:
     void on();
@@ -61,7 +61,6 @@ public slots:
     void setCPUConfig(const CPUConfig& cfg);
 
     void loadROM(const QString& filename);
-
 
 
 private:

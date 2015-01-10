@@ -25,6 +25,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QLabel* lbl_cpupercent;
     QLabel* lbl_cpuOnOff;
     QPixmap startIcon;
     QPixmap stopIcon;
@@ -47,6 +48,7 @@ public slots:
     void pause(bool pause);
     void stop();
 
+    void updateEmuSpeed(double speed);
 };
 
 #endif // MAINWINDOW_H
